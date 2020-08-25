@@ -1,6 +1,6 @@
 language: cpp
 sudo: required
-dist: bionic
+dist: focal
 git:
   depth: 9999999
 notifications:
