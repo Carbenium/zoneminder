@@ -17,7 +17,6 @@ addons:
     - key_url: http://keyserver.ubuntu.com:11371/pks/lookup?op=get&search=0x4D0BF748776FFB04
     packages:
     - gdebi
-    - yum-utils
     - patch
     - git
     - curl
