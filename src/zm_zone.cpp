@@ -97,7 +97,7 @@ void Zone::Setup(
   if (config.record_diag_images) {
     if (config.record_diag_images_fifo) {
       diag_path = stringtf("%s/diagpipe-%d-poly.jpg",
-          staticConfig.PATH_SOCKS.c_str(), id);
+                           GetStaticConfig().PATH_SOCKS.c_str(), id);
 
       Fifo::fifo_create_if_missing(diag_path.c_str());
     } else {

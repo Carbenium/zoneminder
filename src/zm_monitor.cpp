@@ -118,7 +118,7 @@ Monitor::MonitorLink::MonitorLink(unsigned int p_id, const char *p_name) :
 
 #if ZM_MEM_MAPPED
   map_fd = -1;
-  mem_file = stringtf("%s/zm.mmap.%u", staticConfig.PATH_MAP.c_str(), id);
+  mem_file = stringtf("%s/zm.mmap.%u", GetStaticConfig().PATH_MAP.c_str(), id);
 #else // ZM_MEM_MAPPED
   shm_id = 0;
 #endif // ZM_MEM_MAPPED
@@ -665,8 +665,8 @@ void Monitor::Load(MYSQL_ROW dbrow, bool load_zones=true, Purpose p = QUERY) {
 
     if ( config.record_diag_images ) {
       if ( config.record_diag_images_fifo ) {
-        diag_path_ref = stringtf("%s/diagpipe-r-%d.jpg", staticConfig.PATH_SOCKS.c_str(), id);
-        diag_path_delta = stringtf("%s/diagpipe-d-%d.jpg", staticConfig.PATH_SOCKS.c_str(), id);
+        diag_path_ref = stringtf("%s/diagpipe-r-%d.jpg", GetStaticConfig().PATH_SOCKS.c_str(), id);
+        diag_path_delta = stringtf("%s/diagpipe-d-%d.jpg", GetStaticConfig().PATH_SOCKS.c_str(), id);
         Fifo::fifo_create_if_missing(diag_path_ref.c_str());
         Fifo::fifo_create_if_missing(diag_path_delta.c_str());
       } else {
@@ -898,7 +898,7 @@ bool Monitor::connect() {
   }
   Debug(3, "Connecting to monitor.  Purpose is %d", purpose);
 #if ZM_MEM_MAPPED
-  mem_file = stringtf("%s/zm.mmap.%u", staticConfig.PATH_MAP.c_str(), id);
+  mem_file = stringtf("%s/zm.mmap.%u", GetStaticConfig().PATH_MAP.c_str(), id);
   if (purpose != CAPTURE) {
     map_fd = open(mem_file.c_str(), O_RDWR);
   } else {
@@ -1444,7 +1444,7 @@ void Monitor::DumpZoneImage(const char *zone_string) {
   }
 
   Image *zone_image = nullptr;
-  if ( ( (!staticConfig.SERVER_ID) || ( staticConfig.SERVER_ID == server_id ) ) && mem_ptr ) {
+  if ( ( (!GetStaticConfig().SERVER_ID) || ( GetStaticConfig().SERVER_ID == server_id ) ) && mem_ptr ) {
     Debug(3, "Trying to load from local zmc");
     int index = shared_data->last_write_index;
     ZMPacket *snap = getSnapshot(index);
@@ -2429,8 +2429,8 @@ std::vector<std::shared_ptr<Monitor>> Monitor::LoadLocalMonitors
 
   if ( device[0] )
     where += " AND `Device`='" + std::string(device) + "'";
-  if (staticConfig.SERVER_ID)
-    where += stringtf(" AND `ServerId`=%d", staticConfig.SERVER_ID);
+  if (GetStaticConfig().SERVER_ID)
+    where += stringtf(" AND `ServerId`=%d", GetStaticConfig().SERVER_ID);
   return LoadMonitors(where, purpose);
 }
 #endif // ZM_HAS_V4L
@@ -2438,8 +2438,8 @@ std::vector<std::shared_ptr<Monitor>> Monitor::LoadLocalMonitors
 std::vector<std::shared_ptr<Monitor>> Monitor::LoadRemoteMonitors
 (const char *protocol, const char *host, const char *port, const char *path, Purpose purpose) {
   std::string where = "`Function` != 'None' AND `Type` = 'Remote'";
-  if (staticConfig.SERVER_ID)
-    where += stringtf(" AND `ServerId`=%d", staticConfig.SERVER_ID);
+  if (GetStaticConfig().SERVER_ID)
+    where += stringtf(" AND `ServerId`=%d", GetStaticConfig().SERVER_ID);
   if (protocol)
     where += stringtf(" AND `Protocol` = '%s' AND `Host` = '%s' AND `Port` = '%s' AND `Path` = '%s'", protocol, host, port, path);
   return LoadMonitors(where, purpose);
@@ -2449,8 +2449,8 @@ std::vector<std::shared_ptr<Monitor>> Monitor::LoadFileMonitors(const char *file
   std::string where = "`Function` != 'None' AND `Type` = 'File'";
   if (file[0])
     where += " AND `Path`='" + std::string(file) + "'";
-  if (staticConfig.SERVER_ID)
-    where += stringtf(" AND `ServerId`=%d", staticConfig.SERVER_ID);
+  if (GetStaticConfig().SERVER_ID)
+    where += stringtf(" AND `ServerId`=%d", GetStaticConfig().SERVER_ID);
   return LoadMonitors(where, purpose);
 }
 
@@ -2458,8 +2458,8 @@ std::vector<std::shared_ptr<Monitor>> Monitor::LoadFfmpegMonitors(const char *fi
   std::string where = "`Function` != 'None' AND `Type` = 'Ffmpeg'";
   if (file[0])
     where += " AND `Path` = '" + std::string(file) + "'";
-  if (staticConfig.SERVER_ID)
-    where += stringtf(" AND `ServerId`=%d", staticConfig.SERVER_ID);
+  if (GetStaticConfig().SERVER_ID)
+    where += stringtf(" AND `ServerId`=%d", GetStaticConfig().SERVER_ID);
   return LoadMonitors(where, purpose);
 }
 
@@ -3010,7 +3010,7 @@ int Monitor::PrimeCapture() {
     if (video_stream_id >= 0) {
       AVStream *videoStream = camera->getVideoStream();
       snprintf(shared_data->video_fifo_path, sizeof(shared_data->video_fifo_path) - 1, "%s/video_fifo_%u.%s",
-               staticConfig.PATH_SOCKS.c_str(),
+               GetStaticConfig().PATH_SOCKS.c_str(),
                id,
                avcodec_get_name(videoStream->codecpar->codec_id)
       );
@@ -3020,7 +3020,7 @@ int Monitor::PrimeCapture() {
       AVStream *audioStream = camera->getAudioStream();
       if (audioStream && CODEC(audioStream)) {
         snprintf(shared_data->audio_fifo_path, sizeof(shared_data->audio_fifo_path) - 1, "%s/audio_fifo_%u.%s",
-                 staticConfig.PATH_SOCKS.c_str(), id,
+                 GetStaticConfig().PATH_SOCKS.c_str(), id,
                  avcodec_get_name(audioStream->codecpar->codec_id)
         );
       audio_fifo = new Fifo(shared_data->audio_fifo_path, true);

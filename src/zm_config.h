@@ -74,13 +74,15 @@ struct StaticConfig {
   std::string PATH_LOGS;
   std::string PATH_SWAP;
   std::string PATH_ARP;
-  char    capture_file_format[PATH_MAX];
-  char    analyse_file_format[PATH_MAX];
-  char    general_file_format[PATH_MAX];
-  char    video_file_format[PATH_MAX];
+  char    capture_file_format[1024];
+  char    analyse_file_format[1024];
+  char    general_file_format[1024];
+  char    video_file_format[1024];
 };
 
-extern StaticConfig staticConfig;
+StaticConfig const& GetStaticConfig();
+
+//extern StaticConfig staticConfig;
 
 class ConfigItem {
 private:

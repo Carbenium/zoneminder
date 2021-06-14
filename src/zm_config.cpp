@@ -31,6 +31,12 @@
 // set the relevant ENV vars because the logger gets it's setting from the 
 // config.
 
+static StaticConfig staticConfig;
+
+StaticConfig const& GetStaticConfig() {
+  return staticConfig;
+}
+
 void zmLoadStaticConfig() {
   // Process name, value pairs from the main config file first
   process_configfile(ZM_CONFIG);
@@ -59,6 +65,8 @@ void zmLoadStaticConfig() {
     closedir(configSubFolder);
   }
 }
+
+
 
 void zmLoadDBConfig() {
   if (!zmDbConnected) {
@@ -208,8 +216,6 @@ void process_configfile(char const *configFile) {
   } // end foreach line of the config
   fclose(cfg);
 }
-
-StaticConfig staticConfig;
 
 ConfigItem::ConfigItem(const char *p_name, const char *p_value, const char *const p_type) {
   name = new char[strlen(p_name)+1];

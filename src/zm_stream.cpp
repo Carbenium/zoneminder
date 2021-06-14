@@ -294,9 +294,9 @@ void StreamBase::openComms() {
   if ( connkey > 0 ) {
 
     // Have to mkdir because systemd is now chrooting and the dir may not exist
-    if ( mkdir(staticConfig.PATH_SOCKS.c_str(), 0755) ) {
+    if ( mkdir(GetStaticConfig().PATH_SOCKS.c_str(), 0755) ) {
       if ( errno != EEXIST ) {
-        Error("Can't mkdir ZM_PATH_SOCKS %s: %s.", staticConfig.PATH_SOCKS.c_str(), strerror(errno));
+        Error("Can't mkdir ZM_PATH_SOCKS %s: %s.", GetStaticConfig().PATH_SOCKS.c_str(), strerror(errno));
       }
     }
 
@@ -304,7 +304,7 @@ void StreamBase::openComms() {
         sock_path_lock,
         sizeof(sock_path_lock),
         "%s/zms-%06d.lock",
-        staticConfig.PATH_SOCKS.c_str(),
+        GetStaticConfig().PATH_SOCKS.c_str(),
         connkey
         );
     if ( length >= sizeof(sock_path_lock) ) {
@@ -313,15 +313,15 @@ void StreamBase::openComms() {
     Debug(1, "Trying to open the lock on %s", sock_path_lock);
 
     // Under systemd, we get chrooted to something like /tmp/systemd-apache-blh/ so the dir may not exist.
-    if ( mkdir(staticConfig.PATH_SOCKS.c_str(), 0755) ) {
+    if ( mkdir(GetStaticConfig().PATH_SOCKS.c_str(), 0755) ) {
       if ( errno != EEXIST ) {
-        Error("Can't mkdir %s: %s", staticConfig.PATH_SOCKS.c_str(), strerror(errno));
+        Error("Can't mkdir %s: %s", GetStaticConfig().PATH_SOCKS.c_str(), strerror(errno));
         return;
       } else {
-        Debug(3, "SOCKS dir %s already exists", staticConfig.PATH_SOCKS.c_str() );
+        Debug(3, "SOCKS dir %s already exists", GetStaticConfig().PATH_SOCKS.c_str() );
       }
     } else {
-      Debug(3, "Success making SOCKS dir %s", staticConfig.PATH_SOCKS.c_str() );
+      Debug(3, "Success making SOCKS dir %s", GetStaticConfig().PATH_SOCKS.c_str() );
     }
 
     lock_fd = open(sock_path_lock, O_CREAT|O_WRONLY, S_IRUSR | S_IWUSR);
@@ -347,7 +347,7 @@ void StreamBase::openComms() {
         loc_sock_path,
         sizeof(loc_sock_path),
         "%s/zms-%06ds.sock",
-        staticConfig.PATH_SOCKS.c_str(),
+        GetStaticConfig().PATH_SOCKS.c_str(),
         connkey
         );
     if ( length >= sizeof(loc_sock_path) ) {
@@ -367,7 +367,7 @@ void StreamBase::openComms() {
       Fatal("Can't bind: %s", strerror(errno));
     }
 
-    snprintf(rem_sock_path, sizeof(rem_sock_path), "%s/zms-%06dw.sock", staticConfig.PATH_SOCKS.c_str(), connkey);
+    snprintf(rem_sock_path, sizeof(rem_sock_path), "%s/zms-%06dw.sock", GetStaticConfig().PATH_SOCKS.c_str(), connkey);
     strncpy(rem_addr.sun_path, rem_sock_path, sizeof(rem_addr.sun_path));
     rem_addr.sun_family = AF_UNIX;
 

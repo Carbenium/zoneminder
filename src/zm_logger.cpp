@@ -58,7 +58,7 @@ Logger::Logger() :
   mSyslogLevel(NOLOG),
   mEffectiveLevel(NOLOG),
   mDbConnected(false),
-  mLogPath(staticConfig.PATH_LOGS.c_str()),
+  mLogPath(GetStaticConfig().PATH_LOGS.c_str()),
   //  mLogFile( mLogPath+"/"+mId+".log" ),
   mLogFileFP(nullptr),
   mHasTerminal(false),
@@ -529,7 +529,7 @@ void Logger::logPrint(bool hex, const char *filepath, int line, int level, const
           "( `TimeKey`, `Component`, `ServerId`, `Pid`, `Level`, `Code`, `Message`, `File`, `Line` )"
           " VALUES "
           "( %ld.%06ld, '%s', %d, %d, %d, '%s', '%s', '%s', %d )",
-          now_sec, now_frac.count(), mId.c_str(), staticConfig.SERVER_ID, tid, level, classString,
+          now_sec, now_frac.count(), mId.c_str(), GetStaticConfig().SERVER_ID, tid, level, classString,
           escapedString.c_str(), file, line);
       dbQueue.push(std::move(sql_string));
     } else {

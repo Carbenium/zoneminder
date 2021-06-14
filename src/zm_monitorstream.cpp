@@ -522,7 +522,7 @@ void MonitorStream::runStream() {
     // 15 is the max length for the swap path suffix, /zmswap-whatever, assuming max 6 digits for monitor id
     const int max_swap_len_suffix = 15;
 
-    int swap_path_length = staticConfig.PATH_SWAP.length() + 1; // +1 for NULL terminator
+    int swap_path_length = GetStaticConfig().PATH_SWAP.length() + 1; // +1 for NULL terminator
     int subfolder1_length = snprintf(nullptr, 0, "/zmswap-m%u", monitor->Id()) + 1;
     int subfolder2_length = snprintf(nullptr, 0, "/zmswap-q%06d", connkey) + 1;
     int total_swap_path_length = swap_path_length + subfolder1_length + subfolder2_length;
@@ -530,7 +530,7 @@ void MonitorStream::runStream() {
     if ( total_swap_path_length + max_swap_len_suffix > PATH_MAX ) {
       Error("Swap Path is too long. %d > %d ", total_swap_path_length+max_swap_len_suffix, PATH_MAX);
     } else {
-      swap_path = staticConfig.PATH_SWAP;
+      swap_path = GetStaticConfig().PATH_SWAP;
 
       Debug(3, "Checking swap path folder: %s", swap_path.c_str());
       if ( checkSwapPath(swap_path.c_str(), true) ) {

@@ -189,7 +189,7 @@ bool EventStream::loadEventData(uint64_t event_id) {
     else
       snprintf(event_data->path, sizeof(event_data->path),
           "%s/%s/%u/%02d/%02d/%02d/%02d/%02d/%02d",
-          staticConfig.PATH_WEB.c_str(), storage_path, event_data->monitor_id,
+               GetStaticConfig().PATH_WEB.c_str(), storage_path, event_data->monitor_id,
           event_time.tm_year-100, event_time.tm_mon+1, event_time.tm_mday,
           event_time.tm_hour, event_time.tm_min, event_time.tm_sec);
   } else if ( event_data->scheme == Storage::MEDIUM ) {
@@ -206,7 +206,7 @@ bool EventStream::loadEventData(uint64_t event_id) {
     else
       snprintf(event_data->path, sizeof(event_data->path),
           "%s/%s/%u/%04d-%02d-%02d/%" PRIu64,
-          staticConfig.PATH_WEB.c_str(), storage_path, event_data->monitor_id,
+               GetStaticConfig().PATH_WEB.c_str(), storage_path, event_data->monitor_id,
           event_time.tm_year+1900, event_time.tm_mon+1, event_time.tm_mday,
           event_data->event_id);
 
@@ -216,7 +216,7 @@ bool EventStream::loadEventData(uint64_t event_id) {
           storage_path, event_data->monitor_id, event_data->event_id);
     else
       snprintf(event_data->path, sizeof(event_data->path), "%s/%s/%u/%" PRIu64,
-          staticConfig.PATH_WEB.c_str(), storage_path, event_data->monitor_id,
+               GetStaticConfig().PATH_WEB.c_str(), storage_path, event_data->monitor_id,
           event_data->event_id);
   }
 
@@ -692,7 +692,7 @@ bool EventStream::checkEventLoaded() {
 Image * EventStream::getImage( ) {
   static char filepath[PATH_MAX];
 
-  snprintf(filepath, sizeof(filepath), staticConfig.capture_file_format, event_data->path, curr_frame_id);
+  snprintf(filepath, sizeof(filepath), GetStaticConfig().capture_file_format, event_data->path, curr_frame_id);
   Debug(2, "EventStream::getImage path(%s) from %s frame(%ld) ", filepath, event_data->path, curr_frame_id);
   Image *image = new Image(filepath);
   return image;
@@ -707,12 +707,12 @@ bool EventStream::sendFrame(Microseconds delta_us) {
   // This needs to be abstracted.  If we are saving jpgs, then load the capture file.
   // If we are only saving analysis frames, then send that.
   if ( event_data->SaveJPEGs & 1 ) {
-    snprintf(filepath, sizeof(filepath), staticConfig.capture_file_format, event_data->path, curr_frame_id);
+    snprintf(filepath, sizeof(filepath), GetStaticConfig().capture_file_format, event_data->path, curr_frame_id);
   } else if ( event_data->SaveJPEGs & 2 ) {
-    snprintf(filepath, sizeof(filepath), staticConfig.analyse_file_format, event_data->path, curr_frame_id);
+    snprintf(filepath, sizeof(filepath), GetStaticConfig().analyse_file_format, event_data->path, curr_frame_id);
     if ( stat(filepath, &filestat) < 0 ) {
       Debug(1, "analyze file %s not found will try to stream from other", filepath);
-      snprintf(filepath, sizeof(filepath), staticConfig.capture_file_format, event_data->path, curr_frame_id);
+      snprintf(filepath, sizeof(filepath), GetStaticConfig().capture_file_format, event_data->path, curr_frame_id);
       if ( stat(filepath, &filestat) < 0 ) {
         Debug(1, "capture file %s not found either", filepath);
         filepath[0] = 0;

@@ -69,6 +69,9 @@ set(ZM_BIN_SRC_FILES
 # A fix for cmake recompiling the source files for every target.
 add_library(zm STATIC ${ZM_BIN_SRC_FILES})
 
+set_property(TARGET zm PROPERTY
+  INTERPROCEDURAL_OPTIMIZATION TRUE)
+
 target_include_directories(zm
   PUBLIC
     ${CMAKE_BINARY_DIR}

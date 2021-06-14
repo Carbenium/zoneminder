@@ -3,6 +3,8 @@
 # For more information and installation, see the INSTALL file
 #
 cmake_minimum_required(VERSION 3.5.0)
+cmake_policy(SET CMP0069 NEW)
+
 project(zoneminder)
 file(STRINGS "version" zoneminder_VERSION)
 # make API version a minor of ZM version
